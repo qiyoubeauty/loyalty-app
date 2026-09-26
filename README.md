@@ -11,8 +11,8 @@ Default setup: **1 stamp per visit with a minimum spend of RM100**, and stamps s
 
 | Page | URL |
 |---|---|
-| Customer card | `https://riekie3.github.io/pedicure-loyalty/?c=<card-code>` |
-| Staff app | `https://riekie3.github.io/pedicure-loyalty/staff.html` |
+| Customer card | `https://qiyoubeauty.github.io/loyalty-app/?c=<card-code>` |
+| Staff app | `https://qiyoubeauty.github.io/loyalty-app/staff.html` |
 
 > Until Firebase is connected the app runs in **demo mode**. Everything works, but data is saved only in that one browser, with sample customers so you can try it out.
 
@@ -52,7 +52,7 @@ Default setup: **1 stamp per visit with a minimum spend of RM100**, and stamps s
 
 ### 1. Create the Firebase project
 1. Go to <https://console.firebase.google.com> and sign in with a Google account.
-2. **Create a project**. Name it e.g. `pedicure-loyalty`. Google Analytics isn't needed, so switch it off.
+2. **Create a project**. Name it e.g. `qiyou-loyalty`. Google Analytics isn't needed, so switch it off.
 3. You stay on the free **Spark** plan. No credit card is needed.
 
 ### 2. Turn on the database
@@ -66,7 +66,7 @@ Default setup: **1 stamp per visit with a minimum spend of RM100**, and stamps s
 1. Go to **Build → Authentication → Get started**.
 2. Under **Sign-in method**, choose **Email/Password → Enable → Save**.
 3. Under **Users**, click **Add user**. Enter the same email as in the rules and a strong password.
-4. Under **Settings → Authorized domains**, click **Add domain** and enter `riekie3.github.io`.
+4. Under **Settings → Authorized domains**, click **Add domain** and enter `qiyoubeauty.github.io`.
 5. Under **Settings → User actions**, untick **Enable create (sign-up)** and save. Nobody else can then create accounts.
 
 ### 4. Connect the app to Firebase
@@ -77,7 +77,7 @@ Default setup: **1 stamp per visit with a minimum spend of RM100**, and stamps s
 
 ### 5. GitHub Pages
 Go to the repo **Settings → Pages → Build and deployment**. Choose **Deploy from a branch**, set the branch to `main` and the folder to `/ (root)`, then click **Save**.
-About a minute later the site is live at `https://riekie3.github.io/pedicure-loyalty/`.
+About a minute later the site is live at `https://qiyoubeauty.github.io/loyalty-app/`.
 
 ### 6. First login
 Open `…/staff.html` and log in with the staff account. The default settings are created automatically. Then go to **Settings** and set your shop name, logo, colour and rewards.
