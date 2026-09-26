@@ -7,7 +7,8 @@ import {
 } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
 import {
   getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut as fbSignOut,
-  setPersistence, browserLocalPersistence,
+  setPersistence, browserLocalPersistence, EmailAuthProvider, reauthenticateWithCredential,
+  updatePassword, sendPasswordResetEmail,
 } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js';
 import { firebaseConfig } from './config.js';
 import { monthKey } from './logic.js';
@@ -110,4 +111,17 @@ export function signIn(email, password) {
 
 export function signOut() {
   return fbSignOut(auth);
+}
+
+// Firebase only allows a password change right after the user proves the current password.
+export async function changePassword(current, next) {
+  const user = auth.currentUser;
+  if (!user) throw Object.assign(new Error('not signed in'), { code: 'auth/no-current-user' });
+  await reauthenticateWithCredential(user, EmailAuthProvider.credential(user.email, current));
+  await updatePassword(user, next);
+}
+
+// Emails a reset link (sent by Firebase) to the staff address.
+export function resetPassword(email) {
+  return sendPasswordResetEmail(auth, email.trim());
 }

@@ -131,6 +131,10 @@ export async function signOut() {
   authListeners.forEach(cb => cb(null));
 }
 
+export async function changePassword() { /* demo: nothing to change */ }
+
+export async function resetPassword() { /* demo: no emails are sent */ }
+
 export function resetDemo() {
   state = seed();
   save();

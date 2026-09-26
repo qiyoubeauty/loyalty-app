@@ -172,6 +172,7 @@ function renderLogin() {
         <label class="field"><span>${esc(t('password'))}</span><input class="input" name="password" type="password" autocomplete="current-password" ${db.mode === 'demo' ? '' : 'required'}></label>
         <p class="notice danger" id="loginErr" hidden></p>
         <button class="btn primary big block" type="submit">${esc(t('signIn'))}</button>
+        ${db.mode === 'demo' ? '' : `<button type="button" class="btn ghost block mt" id="forgotBtn">${esc(t('forgotPassword'))}</button>`}
       </form>
     </div>`;
   $('#loginForm').addEventListener('submit', async e => {
@@ -188,6 +189,72 @@ function renderLogin() {
       btn.disabled = false;
     }
   });
+  const forgot = $('#forgotBtn');
+  if (forgot) forgot.onclick = async () => {
+    const email = $('#loginForm').email.value.trim();
+    const box = $('#loginErr');
+    if (!email) { box.hidden = false; box.textContent = t('resetNeedEmail'); return; }
+    forgot.disabled = true;
+    try {
+      await db.resetPassword(email);
+      box.hidden = true;
+      toast(t('resetSent', { email }), { type: 'ok', ms: 8000 });
+    } catch (err) {
+      box.hidden = false;
+      box.textContent = passwordError(err);
+    }
+    forgot.disabled = false;
+  };
+}
+
+function passwordError(err) {
+  const code = err?.code || '';
+  if (/wrong-password|invalid-credential|invalid-login/.test(code)) return t('pwCurrentWrong');
+  if (/too-many-requests/.test(code)) return t('tooManyTries');
+  if (/weak-password|password-does-not-meet/.test(code)) return t('pwTooShort');
+  if (/invalid-email/.test(code)) return t('resetNeedEmail');
+  if (/network/.test(code) || !navigator.onLine) return t('offlineStaff');
+  return t('error', { msg: code || err?.message });
+}
+
+function openChangePassword() {
+  const d = openSheet('pwSheet', `${sheetHead(t('changePassword'), esc(S.user.email))}
+    <form id="pwForm" class="sheet-body" novalidate>
+      <input type="email" name="username" autocomplete="username" value="${esc(S.user.email)}" hidden>
+      <label class="field"><span>${esc(t('currentPassword'))}</span><input class="input lg" name="current" type="password" autocomplete="current-password"></label>
+      <label class="field"><span>${esc(t('newPassword'))}</span><input class="input lg" name="next" type="password" autocomplete="new-password" minlength="8"></label>
+      <label class="field"><span>${esc(t('confirmPassword'))}</span><input class="input lg" name="again" type="password" autocomplete="new-password"></label>
+      <p class="small muted" style="margin:-4px 0 14px">${esc(t('pwHint'))}</p>
+      <p class="notice danger" id="pwErr" hidden></p>
+    </form>
+    <div class="sheet-foot btn-row">
+      <button type="button" class="btn" data-close>${esc(t('cancel'))}</button>
+      <button type="submit" form="pwForm" class="btn primary">${esc(t('changePassword'))}</button>
+    </div>`);
+  d.onclick = e => { if (e.target === d || e.target.closest('[data-close]')) d.close(); };
+  const form = $('#pwForm', d);
+  setTimeout(() => form.current.focus(), 50);
+  form.onsubmit = async e => {
+    e.preventDefault();
+    const err = $('#pwErr', d);
+    const fail = msg => { err.hidden = false; err.textContent = msg; };
+    const current = form.current.value;
+    const next = form.next.value;
+    if (!current) return fail(t('pwCurrentWrong'));
+    if (next.length < 8) return fail(t('pwTooShort'));
+    if (next !== form.again.value) return fail(t('pwMismatch'));
+    if (next === current) return fail(t('pwSame'));
+    const btn = d.querySelector('button[type=submit]');
+    btn.disabled = true;
+    try {
+      await db.changePassword(current, next);
+      d.close();
+      toast(t('pwChanged'), { type: 'ok', ms: 6000 });
+    } catch (e2) {
+      fail(passwordError(e2));
+      btn.disabled = false;
+    }
+  };
 }
 
 function renderDenied() {
@@ -921,6 +988,7 @@ function viewSettings(full) {
         <div class="link-box"><code>${esc(new URL('staff.html', cardBase()).href)}</code>
           <button type="button" class="btn soft sm" data-s="copystaff">${icon.copy}</button></div>
         <div class="row mt" style="border:0;padding:0"><div class="grow small muted">${esc(S.user.email)}</div>
+          <button type="button" class="btn soft sm" data-s="changepw">${icon.edit} ${esc(t('changePassword'))}</button>
           <button type="button" class="btn soft sm" data-s="logout">${icon.logout} ${esc(t('signOut'))}</button></div>
       </div>
     </div>
@@ -1043,6 +1111,7 @@ async function onSettingsClick(e) {
     viewSettings(true);
   } else if (act === 'discard') { discardDraft(); viewSettings(true); }
   else if (act === 'copystaff') copyText(new URL('staff.html', cardBase()).href);
+  else if (act === 'changepw') openChangePassword();
   else if (act === 'logout') {
     if (S.dirty && !await confirmBox(t('unsaved'), { ok: t('signOut') })) return;
     discardDraft();
