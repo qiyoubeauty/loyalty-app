@@ -1,7 +1,7 @@
 // Service worker: lets the card open offline and makes repeat visits instant.
 // App files: network first (so updates show up straight away), cache as fallback.
 // Firebase SDK + fonts: cache first (their URLs are versioned).
-const VERSION = 'v2';
+const VERSION = 'v3';
 const CACHE = `loyalty-${VERSION}`;
 const SHELL = [
   './', './index.html', './staff.html', './css/app.css',
@@ -11,7 +11,9 @@ const SHELL = [
 ];
 
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
+  e.waitUntil(caches.open(CACHE)
+    .then(c => c.addAll(SHELL.map(u => new Request(u, { cache: 'reload' }))))
+    .then(() => self.skipWaiting()));
 });
 
 self.addEventListener('activate', e => {
@@ -36,7 +38,10 @@ self.addEventListener('fetch', e => {
 async function networkFirst(req) {
   const cache = await caches.open(CACHE);
   try {
-    const res = await fetch(req);
+    // no-cache = always ask GitHub if the file changed (cheap 304), so updates show up immediately.
+    // (A page-load request can't be copied with options, so rebuild it from its URL.)
+    const fresh = req.mode === 'navigate' ? new Request(req.url, { cache: 'no-cache' }) : new Request(req, { cache: 'no-cache' });
+    const res = await fetch(fresh);
     if (res.ok) cache.put(req, res.clone());
     return res;
   } catch {

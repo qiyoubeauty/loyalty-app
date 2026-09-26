@@ -164,6 +164,12 @@ export function stampGridHtml(stamps, size, milestones, { small = false, popInde
 
 export function registerSW() {
   if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+    // When a new version is deployed, reload once so nobody keeps running old code.
+    const hadController = !!navigator.serviceWorker.controller;
+    let reloaded = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (hadController && !reloaded) { reloaded = true; location.reload(); }
+    });
     navigator.serviceWorker.register('./sw.js').catch(() => { /* offline support is optional */ });
   }
 }
