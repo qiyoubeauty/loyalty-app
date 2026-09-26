@@ -192,7 +192,10 @@ function shopHtml(st) {
   const sh = st.shop;
   const items = [];
   if (sh.address) items.push(`<li class="row"><div class="icon-bubble">${icon.pin}</div><div class="grow" style="white-space:pre-line">${esc(sh.address)}</div>
-    <a class="btn soft sm" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(sh.address)}">${esc(t('openMap'))}</a></li>`);
+</li>`);
+  if (sh.address) items.push(`<li class="row" style="border-top:0;padding-top:0"><div class="btn-row" style="width:100%">
+    <a class="btn soft sm" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(sh.address)}">${icon.pin} ${esc(t('openMap'))}</a>
+    <a class="btn soft sm" target="_blank" rel="noopener" href="https://waze.com/ul?q=${encodeURIComponent(sh.address)}&navigate=yes">${icon.pin} ${esc(t('waze'))}</a></div></li>`);
   if (sh.hours) items.push(`<li class="row"><div class="icon-bubble">${icon.clock}</div><div class="grow">${esc(sh.hours)}</div></li>`);
   if (sh.instagram) items.push(`<li class="row"><div class="icon-bubble">${icon.insta}</div><div class="grow"><a target="_blank" rel="noopener" href="https://instagram.com/${encodeURIComponent(sh.instagram)}">@${esc(sh.instagram)}</a></div></li>`);
   const wa = sh.whatsapp ? `<a class="btn wa block mt" target="_blank" rel="noopener" href="https://wa.me/${esc(sh.whatsapp)}">${icon.whatsapp} ${esc(t('whatsappUs'))}</a>` : '';
