@@ -6,12 +6,12 @@
 // works, but data is only saved in this browser on this device.
 // ─────────────────────────────────────────────────────────────────────────────
 export const firebaseConfig = {
-  apiKey: 'PASTE_HERE',
-  authDomain: '',
-  projectId: '',
-  storageBucket: '',
-  messagingSenderId: '',
-  appId: '',
+  apiKey: 'AIzaSyDp-88WFgay3zAOhyJH8Vgg7iM_0_lIdXk',
+  authDomain: 'qiyou-loyalty.firebaseapp.com',
+  projectId: 'qiyou-loyalty',
+  storageBucket: 'qiyou-loyalty.firebasestorage.app',
+  messagingSenderId: '839055405999',
+  appId: '1:839055405999:web:11c98d6a68eec0f2adb55a',
 };
 
 export const isDemo = !firebaseConfig.apiKey || firebaseConfig.apiKey === 'PASTE_HERE';
