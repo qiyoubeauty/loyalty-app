@@ -221,10 +221,10 @@ textarea.input { min-height: 80px; resize: vertical; }
 .search svg { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; color: var(--muted); }
 .search .input { padding-left: 46px; }
 .check { display: flex; gap: 10px; align-items: flex-start; font-size: .88rem; margin-bottom: 14px; cursor: pointer; }
-.check input { width: 20px; height: 20px; accent-color: var(--accent); flex: none; margin-top: 1px; }
+.check > input { width: 20px; height: 20px; accent-color: var(--accent); flex: none; margin-top: 1px; }
 .radio-card { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border: 1.5px solid var(--line); border-radius: 14px; margin-bottom: 8px; cursor: pointer; }
-.radio-card:has(input:checked) { border-color: var(--accent); background: var(--accent-softer); }
-.radio-card input { accent-color: var(--accent); width: 18px; height: 18px; margin-top: 2px; flex: none; }
+.radio-card:has(> input:checked) { border-color: var(--accent); background: var(--accent-softer); }
+.radio-card > input { accent-color: var(--accent); width: 18px; height: 18px; margin-top: 2px; flex: none; }
 .radio-card .grow { flex: 1; }
 .radio-card .sub-fields { margin-top: 10px; }
 .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }

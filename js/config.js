@@ -14,4 +14,7 @@ export const firebaseConfig = {
   appId: '1:839055405999:web:11c98d6a68eec0f2adb55a',
 };
 
-export const isDemo = !firebaseConfig.apiKey || firebaseConfig.apiKey === 'PASTE_HERE';
+// Developers can force demo mode on their own computer with ?demo (never on the live site).
+const localDemo = ['localhost', '127.0.0.1'].includes(location.hostname) && new URLSearchParams(location.search).has('demo');
+
+export const isDemo = localDemo || !firebaseConfig.apiKey || firebaseConfig.apiKey === 'PASTE_HERE';
