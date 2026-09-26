@@ -15,6 +15,7 @@ export const DEFAULT_SETTINGS = {
     hours: '',
     whatsapp: '',        // shop WhatsApp number, e.g. 60123456789
     instagram: '',
+    mapsUrl: 'https://share.google/OmFUosUKcdbtyfmYD', // Google Maps / Business Profile share link
   },
   currency: 'RM',
   countryCode: '60',

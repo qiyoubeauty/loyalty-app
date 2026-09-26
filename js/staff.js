@@ -898,7 +898,8 @@ function viewSettings(full) {
           <div class="color-row">${PRESET_COLORS.map(c => `<button type="button" class="swatch" style="background:${c}" data-color="${c}" aria-pressed="${c === sh.color}" aria-label="${c}"></button>`).join('')}
             <input type="color" id="colorPick" value="${esc(sh.color)}" aria-label="Custom colour"></div></div>
         <label class="field"><span>${esc(t('address'))}</span><textarea class="input" data-k="shop.address" rows="2">${esc(sh.address)}</textarea></label>
-        <label class="field"><span>${esc(t('hours'))}</span><input class="input" data-k="shop.hours" value="${esc(sh.hours)}" placeholder="${esc(t('hoursPh'))}"></label>
+        <label class="field"><span>${esc(t('mapsUrl'))}</span><input class="input" data-k="shop.mapsUrl" type="url" inputmode="url" value="${esc(sh.mapsUrl)}" placeholder="https://maps.app.goo.gl/…"><small class="muted small">${esc(t('mapsUrlHint'))}</small></label>
+        <label class="field"><span>${esc(t('hours'))}</span><textarea class="input" data-k="shop.hours" rows="4" placeholder="${esc(t('hoursPh'))}">${esc(sh.hours)}</textarea></label>
         <label class="field"><span>${esc(t('shopWhatsapp'))}</span><input class="input" data-k="shop.whatsapp" type="tel" inputmode="tel" value="${esc(sh.whatsapp ? formatPhone(sh.whatsapp, s.countryCode) : '')}" placeholder="012-345 6789"></label>
         <label class="field"><span>${esc(t('instagram'))}</span><input class="input" data-k="shop.instagram" value="${esc(sh.instagram)}" placeholder="yourshop"></label>
       </div>
@@ -1053,6 +1054,8 @@ async function saveDraft() {
   if (new Set(counts).size !== counts.length) return toast(t('dupStamps'), { type: 'err' });
   s.shop.whatsapp = s.shop.whatsapp ? normalizePhone(s.shop.whatsapp, s.countryCode) : '';
   s.shop.instagram = String(s.shop.instagram || '').replace(/^@/, '').trim();
+  s.shop.mapsUrl = String(s.shop.mapsUrl || '').trim();
+  if (s.shop.mapsUrl && !s.shop.mapsUrl.toLowerCase().startsWith('https://')) return toast(t('mapsUrlBad'), { type: 'err' });
   s.rule.minSpend = Math.max(0, Number(s.rule.minSpend) || 0);
   s.rule.perAmount = Math.max(1, Number(s.rule.perAmount) || 1);
   s.rule.maxPerDay = Math.max(0, Math.floor(Number(s.rule.maxPerDay) || 0));

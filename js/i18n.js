@@ -200,6 +200,10 @@ const D = {
     openCustomer: "Open customer",
     dupStamps: "Two active rewards need the same number of stamps — please make them different.",
     lapsedHead: "Haven’t come back",
+    mapsUrl: "Google Maps link",
+    mapsUrlHint: "In Google Maps, open your shop → Share → Copy link, then paste here.",
+    mapsUrlBad: "The Google Maps link must start with https://",
+    findUs: "Find us on Google Maps",
   },
 
   ms: {
@@ -396,6 +400,10 @@ const D = {
     openCustomer: "Buka pelanggan",
     dupStamps: "Dua hadiah aktif guna bilangan cop yang sama — sila tukar salah satu.",
     lapsedHead: "Lama tak datang",
+    mapsUrl: "Link Google Maps",
+    mapsUrlHint: "Dalam Google Maps, buka kedai anda → Share → Copy link, kemudian tampal di sini.",
+    mapsUrlBad: "Link Google Maps mesti bermula dengan https://",
+    findUs: "Cari kami di Google Maps",
   },
 
   zh: {
@@ -592,6 +600,10 @@ const D = {
     openCustomer: "查看顾客",
     dupStamps: "有两个启用的礼品所需章数一样，请改成不同数量。",
     lapsedHead: "很久没来的顾客",
+    mapsUrl: "Google Maps 链接",
+    mapsUrlHint: "在 Google Maps 打开店铺 → 分享 → 复制链接，再贴在这里。",
+    mapsUrlBad: "Google Maps 链接必须以 https:// 开头",
+    findUs: "在 Google Maps 找我们",
   },
 };
 
