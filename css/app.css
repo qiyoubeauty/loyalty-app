@@ -3,6 +3,7 @@
   color-scheme: light;
   --accent: #e29ab8;                 /* overridden from Settings → Theme colour */
   --accent-ink: color-mix(in oklab, var(--accent) 62%, #2b1830);
+  --accent-strong: color-mix(in oklab, var(--accent) 72%, #4a1d44);  /* readable button colour */
   --accent-soft: color-mix(in oklab, var(--accent) 16%, white);
   --accent-softer: color-mix(in oklab, var(--accent) 8%, white);
   --lavender: #e7defc;
@@ -74,7 +75,7 @@ img { max-width: 100%; }
   border: 0; background: transparent; padding: 5px 10px; border-radius: 999px;
   font-size: .78rem; font-weight: 700; color: var(--muted); cursor: pointer; min-width: 36px;
 }
-.langs button[aria-pressed="true"] { background: var(--accent); color: #fff; box-shadow: 0 2px 8px -2px var(--accent); }
+.langs button[aria-pressed="true"] { background: var(--accent-strong); color: #fff; box-shadow: 0 2px 8px -2px var(--accent); }
 
 /* ---------- stamp card ---------- */
 .stamp-card {
@@ -183,7 +184,7 @@ img { max-width: 100%; }
 .btn:active { transform: scale(.97); }
 .btn:disabled { opacity: .5; cursor: not-allowed; }
 .btn svg { width: 18px; height: 18px; flex: none; }
-.btn.primary { background: var(--accent); color: #fff; box-shadow: 0 6px 16px -6px var(--accent); }
+.btn.primary { background: var(--accent-strong); color: #fff; box-shadow: 0 6px 16px -6px var(--accent); }
 .btn.primary:hover { filter: brightness(1.04); }
 .btn.soft { background: var(--accent-soft); color: var(--accent-ink); }
 .btn.ghost { background: transparent; color: var(--accent-ink); }
