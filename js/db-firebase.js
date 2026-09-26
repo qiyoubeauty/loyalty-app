@@ -2,8 +2,8 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js';
 import {
   initializeFirestore, persistentLocalCache, persistentMultipleTabManager,
-  doc, collection, query, orderBy, limit, onSnapshot, setDoc, updateDoc,
-  runTransaction, writeBatch, getDocs, increment,
+  doc, collection, query, orderBy, limit, onSnapshot, setDoc,
+  runTransaction, writeBatch, getDocs, increment, deleteField,
 } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
 import {
   getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut as fbSignOut,
@@ -23,6 +23,17 @@ const settingsRef = doc(db, 'settings', 'main');
 const customerRef = id => doc(db, 'customers', id);
 const eventRef = (cid, eid) => doc(db, 'customers', cid, 'events', eid);
 const statsRef = key => doc(db, 'stats', key);
+// Phone number and staff notes live in a staff-only collection, so a customer's card link
+// (which can read their customers/{id} document) never exposes them. See firestore.rules.
+const privateRef = id => doc(db, 'private', id);
+const PRIVATE_FIELDS = ['phone', 'note'];
+
+function splitPrivate(data) {
+  const pub = { ...data };
+  const priv = {};
+  for (const k of PRIVATE_FIELDS) if (k in pub) { priv[k] = pub[k]; delete pub[k]; }
+  return { pub, priv };
+}
 
 export function watchSettings(cb, onError) {
   return onSnapshot(settingsRef, s => cb(s.exists() ? s.data() : null), onError);
@@ -32,9 +43,57 @@ export function saveSettings(settings) {
   return setDoc(settingsRef, { ...settings, updatedAt: Date.now() });
 }
 
+// Staff list = public card data merged with the private details.
 export function watchCustomers(cb, onError) {
-  return onSnapshot(collection(db, 'customers'),
-    snap => cb(snap.docs.map(d => ({ id: d.id, ...d.data() }))), onError);
+  let pubDocs = null;
+  let priv = new Map();
+  let privReady = false;
+  let privOk = false;
+  const emit = () => {
+    if (!pubDocs || !privReady) return;
+    cb(pubDocs.map(d => ({ id: d.id, ...d.data(), ...(priv.get(d.id) || {}) })));
+  };
+  const stopPub = onSnapshot(collection(db, 'customers'), snap => {
+    pubDocs = snap.docs;
+    emit();
+    if (privOk) movePrivateFields(snap.docs);
+  }, onError);
+  const stopPriv = onSnapshot(collection(db, 'private'), snap => {
+    priv = new Map(snap.docs.map(d => [d.id, d.data()]));
+    privReady = true;
+    privOk = true;
+    emit();
+    if (pubDocs) movePrivateFields(pubDocs);
+  }, err => {
+    // Rules not updated yet: keep working with the old layout instead of locking staff out.
+    console.warn('Private customer details unavailable:', err?.code || err);
+    privReady = true;
+    emit();
+  });
+  return () => { stopPub(); stopPriv(); };
+}
+
+// One-time move for customers saved before the privacy split: copy phone/note to /private,
+// remove them from the public card, and drop the staff email from their visit history.
+const moving = new Set();
+async function movePrivateFields(docs) {
+  for (const d of docs) {
+    const data = d.data();
+    if (!PRIVATE_FIELDS.some(k => k in data) || moving.has(d.id)) continue;
+    moving.add(d.id);
+    try {
+      const { priv } = splitPrivate(data);
+      const events = await getDocs(collection(db, 'customers', d.id, 'events'));
+      const batch = writeBatch(db);
+      batch.set(privateRef(d.id), priv, { merge: true });
+      batch.update(customerRef(d.id), Object.fromEntries(PRIVATE_FIELDS.map(k => [k, deleteField()])));
+      events.forEach(e => { if ('by' in e.data()) batch.update(e.ref, { by: deleteField() }); });
+      await batch.commit();
+    } catch (err) {
+      console.warn('Could not move private details for', d.id, err?.code || err);
+      moving.delete(d.id);
+    }
+  }
 }
 
 export function watchCustomer(id, cb, onError) {
@@ -57,15 +116,21 @@ function incrementsOf(stats) {
 }
 
 export async function addCustomer(id, data, joinEvent) {
+  const { pub, priv } = splitPrivate(data);
   const batch = writeBatch(db);
-  batch.set(customerRef(id), { ...data, lastEventId: joinEvent.id });
+  batch.set(customerRef(id), { ...pub, lastEventId: joinEvent.id });
+  batch.set(privateRef(id), priv);
   batch.set(eventRef(id, joinEvent.id), joinEvent.data);
   batch.set(statsRef(monthKey(data.createdAt)), { newCustomers: increment(1) }, { merge: true });
   await batch.commit();
 }
 
-export function updateCustomer(id, fields) {
-  return updateDoc(customerRef(id), fields);
+export async function updateCustomer(id, fields) {
+  const { pub, priv } = splitPrivate(fields);
+  const batch = writeBatch(db);
+  if (Object.keys(pub).length) batch.update(customerRef(id), pub);
+  if (Object.keys(priv).length) batch.set(privateRef(id), priv, { merge: true });
+  await batch.commit();
 }
 
 export async function deleteCustomer(id) {
@@ -73,6 +138,7 @@ export async function deleteCustomer(id) {
   const events = await getDocs(collection(db, 'customers', id, 'events'));
   const batch = writeBatch(db);
   events.forEach(d => batch.delete(d.ref));
+  batch.delete(privateRef(id));
   batch.delete(customerRef(id));
   await batch.commit();
 }

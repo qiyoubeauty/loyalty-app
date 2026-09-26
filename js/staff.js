@@ -480,7 +480,7 @@ function openNewCustomer() {
     const joinId = randomId(12);
     const ok = await run(async () => {
       await db.addCustomer(id, newCustomer({ name, phone, note: form.note.value }, now),
-        { id: joinId, data: { type: 'join', at: now, by: S.user.email } });
+        { id: joinId, data: { type: 'join', at: now } });
       if (form.first.checked) await stampNow(id, stampsForVisit(S.settings, amount), amount, true);
     });
     if (!ok) { d.querySelector('button[type=submit]').disabled = false; return; }
@@ -520,7 +520,7 @@ function showCreated(d, c) {
 async function stampNow(cid, count, amount, silent = false) {
   const eid = randomId(12);
   const ok = await run(() => db.transact(cid, ({ customer }) => {
-    const r = applyStamp(customer, S.settings, { count, amount, now: Date.now(), eventId: eid, by: S.user.email });
+    const r = applyStamp(customer, S.settings, { count, amount, now: Date.now(), eventId: eid });
     return { patch: r.patch, newEvent: { id: eid, data: r.event }, stats: r.stats };
   }));
   if (ok && !silent) {
@@ -547,7 +547,7 @@ async function redeem(c, rid) {
   if (!await confirmBox(msg, { ok: t('redeem') })) return;
   const eid = randomId(12);
   const ok = await run(() => db.transact(c.id, ({ customer }) => {
-    const r = applyRedeem(customer, S.settings, rid, { now: Date.now(), eventId: eid, by: S.user.email });
+    const r = applyRedeem(customer, S.settings, rid, { now: Date.now(), eventId: eid });
     return { patch: r.patch, newEvent: { id: eid, data: r.event }, stats: r.stats };
   }));
   if (ok) toast(t('redeemed'), { type: 'ok', action: t('undo'), onAction: () => undoEvent(c.id, eid) });
@@ -809,7 +809,7 @@ function adjustStamps(c) {
     e.preventDefault();
     const eid = randomId(12);
     const ok = await run(() => db.transact(c.id, ({ customer }) => {
-      const r = applyAdjust(customer, S.settings, form.n.value, { now: Date.now(), eventId: eid, by: S.user.email, reason: form.reason.value.trim() });
+      const r = applyAdjust(customer, S.settings, form.n.value, { now: Date.now(), eventId: eid, reason: form.reason.value.trim() });
       return { patch: r.patch, newEvent: { id: eid, data: r.event }, stats: r.stats };
     }));
     if (ok) { d.close(); toast(t('saved'), { type: 'ok', action: t('undo'), onAction: () => undoEvent(c.id, eid) }); }
@@ -913,7 +913,9 @@ function exportCsv() {
       iso(expiresAt(c, st)), iso(c.createdAt), c.note || '', cardLink(c.id)]);
   }
   const csv = '﻿' + rows.map(r => r.map(v => {
-    const s = String(v ?? '');
+    let s = String(v ?? '');
+    // Stop Excel treating text like "=HYPERLINK(...)" as a formula (CSV injection).
+    if (typeof v === 'string' && /^[=+\-@\t\r]/.test(s)) s = "'" + s;
     return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
   }).join(',')).join('\r\n');
   const a = document.createElement('a');

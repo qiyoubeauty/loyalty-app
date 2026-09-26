@@ -35,6 +35,11 @@ service cloud.firestore {
       }
     }
 
+    // Phone numbers and staff notes — staff only, never reachable through a card link.
+    match /private/{customerId} {
+      allow read, write: if isStaff();
+    }
+
     // Monthly numbers for the dashboard.
     match /stats/{month} {
       allow read, write: if isStaff();
