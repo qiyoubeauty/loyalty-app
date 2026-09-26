@@ -2,7 +2,7 @@
 // tried before Firebase is set up. Same functions as db-firebase.js.
 import { monthKey, newCustomer, randomId, DEFAULT_SETTINGS } from './logic.js';
 
-const KEY = 'loyalty-demo-v1';
+const KEY = 'loyalty-demo-v2';
 const channel = 'BroadcastChannel' in self ? new BroadcastChannel(KEY) : null;
 const listeners = new Set();
 
@@ -160,19 +160,19 @@ function seed() {
     for (let i = visits - 1; i >= 0; i--) {
       const at = now - (lastAgo + i * 21) * day;
       const eid = randomId(12);
-      events[eid] = { type: 'stamp', at, count: 1, amount: 68, expired: 0, by: 'demo@staff', undone: false, prev: null };
+      events[eid] = { type: 'stamp', at, count: 1, amount: 128, expired: 0, by: 'demo@staff', undone: false, prev: null };
       lastId = eid;
       const mk = monthKey(at);
       s.stats[mk] = s.stats[mk] || {};
       s.stats[mk].visits = (s.stats[mk].visits || 0) + 1;
       s.stats[mk].stamps = (s.stats[mk].stamps || 0) + 1;
-      s.stats[mk].spent = (s.stats[mk].spent || 0) + 68;
+      s.stats[mk].spent = (s.stats[mk].spent || 0) + 128;
     }
     const lastAt = visits ? now - lastAgo * day : null;
     Object.assign(c, {
       stamps, cycle: visits > 10 ? 2 : 1, redeemed: stamps >= 5 && name.startsWith('Priya') ? ['r5'] : [],
       totalVisits: visits, totalStamps: visits, totalRedeemed: visits > 10 ? 2 : (name.startsWith('Priya') ? 1 : 0),
-      totalSpent: visits * 68, lastStampAt: lastAt, lastVisitAt: lastAt, lastEventId: lastId,
+      totalSpent: visits * 128, lastStampAt: lastAt, lastVisitAt: lastAt, lastEventId: lastId,
       dayKey: null, dayStamps: 0,
     });
     s.customers[id] = c;

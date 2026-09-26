@@ -1,13 +1,13 @@
 // Service worker: lets the card open offline and makes repeat visits instant.
 // App files: network first (so updates show up straight away), cache as fallback.
 // Firebase SDK + fonts: cache first (their URLs are versioned).
-const VERSION = 'v1';
+const VERSION = 'v2';
 const CACHE = `loyalty-${VERSION}`;
 const SHELL = [
   './', './index.html', './staff.html', './css/app.css',
   './js/card.js', './js/staff.js', './js/db.js', './js/db-firebase.js', './js/db-demo.js', './js/config.js',
   './js/logic.js', './js/i18n.js', './js/ui.js', './js/vendor/qrcode.mjs',
-  './icons/icon-192.png', './icons/favicon.svg',
+  './icons/icon-192.png', './icons/favicon-64.png', './icons/logo-256.png',
 ];
 
 self.addEventListener('install', e => {

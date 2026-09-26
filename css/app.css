@@ -1,12 +1,15 @@
 /* Pastel loyalty — shared styles for the customer card and the staff app. */
 :root {
   color-scheme: light;
-  --accent: #e29ab8;                 /* overridden from Settings → Theme colour */
+  --accent: #e8889c;                 /* overridden from Settings → Theme colour */
   --accent-ink: color-mix(in oklab, var(--accent) 62%, #2b1830);
   --accent-strong: color-mix(in oklab, var(--accent) 72%, #4a1d44);  /* readable button colour */
   --accent-soft: color-mix(in oklab, var(--accent) 16%, white);
   --accent-softer: color-mix(in oklab, var(--accent) 8%, white);
-  --lavender: #e7defc;
+  --brand-yellow: #f3ec77;          /* QI·You logo gradient */
+  --brand-peach: #f2b99a;
+  --brand-pink: #ee8a9e;
+  --lavender: #f9e1e8;
   --peach: #ffe3d6;
   --mint: #d9f3e8;
   --sky: #dcecfb;
@@ -26,6 +29,7 @@
   --radius-sm: 14px;
   --shadow: 0 1px 2px rgba(80, 40, 80, .04), 0 8px 24px -8px rgba(120, 60, 110, .14);
   --shadow-lg: 0 24px 60px -20px rgba(120, 60, 110, .35);
+  --font-display: 'Marcellus', 'Songti SC', 'STSong', serif;
   --font: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, 'PingFang SC', 'Microsoft YaHei', sans-serif;
 }
 
@@ -36,7 +40,7 @@ body {
   font-family: var(--font);
   color: var(--ink);
   background:
-    radial-gradient(1200px 600px at 110% -10%, var(--lavender), transparent 60%),
+    radial-gradient(1200px 600px at 110% -10%, #fff3c4, transparent 60%),
     radial-gradient(900px 500px at -20% 10%, var(--peach), transparent 55%),
     var(--bg);
   background-attachment: fixed;
@@ -65,9 +69,10 @@ img { max-width: 100%; }
   display: grid; place-items: center; overflow: hidden;
   box-shadow: inset 0 0 0 1px rgba(255,255,255,.7);
 }
+.brand-logo:has(img) { background: #000; box-shadow: 0 4px 12px -4px rgba(0,0,0,.35); }
 .brand-logo img { width: 100%; height: 100%; object-fit: cover; }
 .brand-logo svg { width: 24px; height: 24px; color: var(--accent-ink); }
-.brand-name { font-weight: 800; font-size: 1.02rem; letter-spacing: -.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.brand-name { font-family: var(--font-display); font-weight: 400; font-size: 1.12rem; letter-spacing: .01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .brand-tag { font-size: .78rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 .langs { display: inline-flex; background: rgba(255,255,255,.75); border: 1px solid var(--line); border-radius: 999px; padding: 3px; flex: none; backdrop-filter: blur(8px); }
@@ -83,7 +88,7 @@ img { max-width: 100%; }
   border-radius: 28px; padding: 22px 20px 20px;
   background:
     radial-gradient(260px 160px at 100% 0%, rgba(255,255,255,.65), transparent 70%),
-    linear-gradient(135deg, color-mix(in oklab, var(--accent) 38%, white) 0%, var(--lavender) 55%, var(--sky) 100%);
+    linear-gradient(135deg, #fdf5c4 0%, #fbdcc9 48%, #f8c5d1 100%);
   box-shadow: var(--shadow-lg);
   color: var(--ink);
 }
@@ -95,7 +100,7 @@ img { max-width: 100%; }
 .stamp-card > * { position: relative; z-index: 1; }
 .card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 16px; }
 .card-kicker { font-size: .72rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--accent-ink); opacity: .85; }
-.card-name { font-size: 1.35rem; font-weight: 800; letter-spacing: -.02em; margin-top: 2px; line-height: 1.2; }
+.card-name { font-family: var(--font-display); font-size: 1.45rem; font-weight: 400; letter-spacing: .01em; margin-top: 2px; line-height: 1.2; }
 .card-count { text-align: right; flex: none; }
 .card-count b { font-size: 1.9rem; font-weight: 800; letter-spacing: -.03em; line-height: 1; }
 .card-count span { display: block; font-size: .75rem; color: var(--muted); font-weight: 600; margin-top: 2px; }
@@ -114,7 +119,7 @@ img { max-width: 100%; }
 .stamp svg { width: 58%; height: 58%; }
 .stamp.filled {
   border: 0; color: #fff;
-  background: radial-gradient(circle at 30% 25%, color-mix(in oklab, var(--accent) 70%, white), var(--accent) 60%, color-mix(in oklab, var(--accent) 80%, #6b2b55));
+  background: radial-gradient(circle at 30% 22%, #fff1ad, color-mix(in oklab, var(--accent) 70%, var(--brand-peach)) 45%, var(--accent) 72%, color-mix(in oklab, var(--accent) 82%, #6b2b55));
   box-shadow: 0 4px 10px -3px color-mix(in oklab, var(--accent) 70%, transparent), inset 0 -3px 6px rgba(0,0,0,.08);
   transform: rotate(var(--rot, 0deg));
 }
@@ -134,7 +139,7 @@ img { max-width: 100%; }
 
 .progress { margin-top: 18px; }
 .bar { height: 8px; border-radius: 999px; background: rgba(255,255,255,.6); overflow: hidden; }
-.bar > i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--accent), color-mix(in oklab, var(--accent) 60%, #b89cf0)); transition: width .8s cubic-bezier(.2, .8, .2, 1); }
+.bar > i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #f0d56a, var(--brand-peach), var(--accent)); transition: width .8s cubic-bezier(.2, .8, .2, 1); }
 .progress p { margin: 8px 0 0; font-size: .9rem; font-weight: 600; }
 .card-foot { display: flex; justify-content: space-between; gap: 8px; margin-top: 14px; font-size: .75rem; color: var(--muted); font-weight: 600; }
 
@@ -170,7 +175,7 @@ img { max-width: 100%; }
 .notice > svg { width: 18px; height: 18px; flex: none; margin-top: 1px; }
 .notice.gold { background: var(--butter); color: #7a5000; }
 .notice.warn { background: var(--warn-soft); color: #7a5000; }
-.notice.info { background: var(--sky); color: #2f5378; }
+.notice.info { background: #fdece4; color: #8a4b35; }
 .notice.danger { background: var(--danger-soft); color: var(--danger); }
 .notice.demo { background: repeating-linear-gradient(135deg, var(--butter), var(--butter) 10px, #fff7dc 10px, #fff7dc 20px); color: #7a5000; }
 
@@ -326,7 +331,7 @@ dialog.alert p { margin: 0 0 18px; font-size: .98rem; font-weight: 600; white-sp
 .hero { text-align: center; padding: 36px 20px; }
 .hero .art { width: 120px; height: 120px; margin: 0 auto 18px; border-radius: 36px; display: grid; place-items: center; background: linear-gradient(135deg, var(--accent-soft), var(--lavender)); box-shadow: var(--shadow); }
 .hero .art svg { width: 64px; height: 64px; color: var(--accent-ink); }
-.hero h1 { margin: 0 0 8px; font-size: 1.5rem; letter-spacing: -.02em; }
+.hero h1 { margin: 0 0 8px; font-family: var(--font-display); font-weight: 400; font-size: 1.6rem; }
 .hero p { margin: 0 auto; color: var(--muted); max-width: 340px; }
 .muted { color: var(--muted); }
 .small { font-size: .82rem; }
@@ -337,7 +342,7 @@ dialog.alert p { margin: 0 0 18px; font-size: .98rem; font-weight: 600; white-sp
 .link-box { display: flex; gap: 8px; align-items: center; background: #f7f2f7; border-radius: 12px; padding: 8px 8px 8px 12px; font-size: .8rem; word-break: break-all; }
 .link-box code { flex: 1; }
 .greet { margin: 4px 2px 16px; }
-.greet h1 { margin: 0; font-size: 1.5rem; letter-spacing: -.02em; }
+.greet h1 { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: 1.7rem; letter-spacing: .01em; }
 .greet p { margin: 2px 0 0; color: var(--muted); font-size: .92rem; }
 
 @media (max-width: 480px) { .hide-sm { display: none; } .reward-edit .grid2 { grid-template-columns: 1fr; gap: 14px; } .toolbar .btn.big { width: 58px; padding: 0; } }

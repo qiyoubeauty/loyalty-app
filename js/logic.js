@@ -7,10 +7,10 @@ export const DEFAULT_CARD_SIZE = 10;
 
 export const DEFAULT_SETTINGS = {
   shop: {
-    name: 'Pastel Pedi Studio',
-    tagline: 'Pedicure · Nail Art · Foot Spa',
-    logo: '',            // small data-URL image, uploaded from Settings
-    color: '#e29ab8',    // accent colour
+    name: 'QI·You 奇遇',
+    tagline: 'Beauty & Nails',
+    logo: 'icons/logo-256.png', // file path, or a small data-URL image uploaded from Settings
+    color: '#e8889c',    // accent colour (logo pink)
     address: '',
     hours: '',
     whatsapp: '',        // shop WhatsApp number, e.g. 60123456789
@@ -23,13 +23,13 @@ export const DEFAULT_SETTINGS = {
     { id: 'r10', stamps: 10, active: true, name: { en: 'Free basic pedicure', ms: 'Pedikur asas percuma', zh: '免费基础修脚' } },
   ],
   rule: {
-    mode: 'visit',   // 'visit' = 1 per visit, 'minSpend' = 1 per visit if spend >= minSpend, 'perAmount' = 1 per every perAmount spent
-    minSpend: 50,
-    perAmount: 50,
+    mode: 'minSpend', // 'visit' = 1 per visit, 'minSpend' = 1 per visit if spend >= minSpend, 'perAmount' = 1 per every perAmount spent
+    minSpend: 100,
+    perAmount: 100,
     maxPerDay: 1,    // 0 = no limit
   },
   expiry: {
-    enabled: false,
+    enabled: true,
     value: 12,
     unit: 'months',  // 'days' | 'weeks' | 'months'
   },

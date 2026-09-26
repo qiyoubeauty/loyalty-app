@@ -1,6 +1,8 @@
-# 💅 Pedicure Loyalty — PWA stamp card
+# 💅 QI·You 奇遇 Beauty & Nails — Loyalty stamp card (PWA)
 
-A pastel, mobile-first loyalty stamp card for a pedicure shop.
+A pastel, mobile-first loyalty stamp card for **QI·You 奇遇 Beauty & Nails**.
+
+Default setup: **1 stamp per visit with a minimum spend of RM100**, and stamps stay valid for **1 year** from the last stamp. Both can be changed in the staff app under **Settings**.
 
 - **Customers** get a personal card link (by WhatsApp or QR). They tap *Add to Home Screen* and it works like an app, with no app store download.
 - **Staff** search a customer, tap **Add stamp**, and redeem rewards when they're unlocked.
