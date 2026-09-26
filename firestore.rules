@@ -1,0 +1,43 @@
+rules_version = '2';
+
+// Security rules for the loyalty app.
+// Paste this whole file into: Firebase console → Firestore Database → Rules → Publish.
+//
+// ⚠ Put YOUR staff login email(s) in the list below (lower-case). Only these accounts
+//   can add stamps, redeem rewards, see the customer list or change settings.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isStaff() {
+      return request.auth != null
+        && request.auth.token.email != null
+        && request.auth.token.email.lower() in [
+          'CHANGE-ME@example.com'
+        ];
+    }
+
+    // Shop settings (name, rewards, rules) — anyone may read so the customer card can show them.
+    match /settings/{doc} {
+      allow read: if true;
+      allow write: if isStaff();
+    }
+
+    // Customers. The document id is the long random code inside each customer's card link,
+    // so a customer can open ONLY their own card. Nobody but staff can list all customers.
+    match /customers/{customerId} {
+      allow get: if true;
+      allow list, create, update, delete: if isStaff();
+
+      // Visit history — reachable only by someone who already has the card link.
+      match /events/{eventId} {
+        allow read: if true;
+        allow write: if isStaff();
+      }
+    }
+
+    // Monthly numbers for the dashboard.
+    match /stats/{month} {
+      allow read, write: if isStaff();
+    }
+  }
+}
