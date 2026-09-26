@@ -16,6 +16,7 @@ export const DEFAULT_SETTINGS = {
     whatsapp: '',        // shop WhatsApp number, e.g. 60123456789
     instagram: '',
     mapsUrl: 'https://share.google/OmFUosUKcdbtyfmYD', // Google Maps / Business Profile share link
+    reviewUrl: 'https://search.google.com/local/writereview?placeid=ChIJ2w7NBeuzzTERDps4jfMtJMQ', // opens Google's "write a review" box
   },
   currency: 'RM',
   countryCode: '60',

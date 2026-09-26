@@ -9,7 +9,7 @@ import {
 import { t, lang, fmtDate, fmtDateTime, fmtMoney, relDay } from './i18n.js';
 import {
   icon, esc, $, toast, confirmBox, applyTheme, brandHtml, langSwitchHtml, bindLangSwitch,
-  stampGridHtml, initials, registerSW, eventLabel, setHtmlKeepToasts,
+  stampGridHtml, initials, registerSW, eventLabel, setHtmlKeepToasts, safeUrl,
 } from './ui.js';
 import qrcode from './vendor/qrcode.mjs';
 
@@ -247,6 +247,12 @@ function waLink(phone, text) {
 
 function sendCardWa(c) {
   window.open(waLink(c.phone, t('waMessage', { name: c.name.split(' ')[0], shop: S.settings.shop.name, link: cardLink(c.id) })), '_blank', 'noopener');
+}
+
+function askReviewWa(c) {
+  const link = safeUrl(S.settings.shop.reviewUrl);
+  if (!link) return;
+  window.open(waLink(c.phone, t('waReview', { name: c.name.split(' ')[0], shop: S.settings.shop.name, link })), '_blank', 'noopener');
 }
 
 function remindWa(c) {
@@ -564,6 +570,7 @@ function renderCustomer() {
           <button type="button" class="btn soft" data-act="qr">${icon.qr} QR</button>
           <button type="button" class="btn soft" data-act="copy">${icon.copy} ${esc(t('copyLink'))}</button>
         </div>
+        ${safeUrl(st.shop.reviewUrl) ? `<button type="button" class="btn gold block mt" data-act="review">${icon.star} ${esc(t('askReview'))}</button>` : ''}
       </div>
 
       <div class="panel">
@@ -668,6 +675,7 @@ async function onCustomerClick(e) {
   } else if (act === 'redeem') redeem(c, btn.dataset.rid);
   else if (act === 'undo') undoEvent(c.id, btn.dataset.eid);
   else if (act === 'wa') sendCardWa(c);
+  else if (act === 'review') askReviewWa(c);
   else if (act === 'qr') showQr(c);
   else if (act === 'copy') copyText(cardLink(c.id));
   else if (act === 'edit') editCustomer(c);
@@ -899,6 +907,7 @@ function viewSettings(full) {
             <input type="color" id="colorPick" value="${esc(sh.color)}" aria-label="Custom colour"></div></div>
         <label class="field"><span>${esc(t('address'))}</span><textarea class="input" data-k="shop.address" rows="2">${esc(sh.address)}</textarea></label>
         <label class="field"><span>${esc(t('mapsUrl'))}</span><input class="input" data-k="shop.mapsUrl" type="url" inputmode="url" value="${esc(sh.mapsUrl)}" placeholder="https://maps.app.goo.gl/…"><small class="muted small">${esc(t('mapsUrlHint'))}</small></label>
+        <label class="field"><span>${esc(t('reviewUrl'))}</span><input class="input" data-k="shop.reviewUrl" type="url" inputmode="url" value="${esc(sh.reviewUrl)}" placeholder="https://search.google.com/local/writereview?placeid=…"><small class="muted small">${esc(t('reviewUrlHint'))}</small></label>
         <label class="field"><span>${esc(t('hours'))}</span><textarea class="input" data-k="shop.hours" rows="4" placeholder="${esc(t('hoursPh'))}">${esc(sh.hours)}</textarea></label>
         <label class="field"><span>${esc(t('shopWhatsapp'))}</span><input class="input" data-k="shop.whatsapp" type="tel" inputmode="tel" value="${esc(sh.whatsapp ? formatPhone(sh.whatsapp, s.countryCode) : '')}" placeholder="012-345 6789"></label>
         <label class="field"><span>${esc(t('instagram'))}</span><input class="input" data-k="shop.instagram" value="${esc(sh.instagram)}" placeholder="yourshop"></label>
@@ -1056,6 +1065,8 @@ async function saveDraft() {
   s.shop.instagram = String(s.shop.instagram || '').replace(/^@/, '').trim();
   s.shop.mapsUrl = String(s.shop.mapsUrl || '').trim();
   if (s.shop.mapsUrl && !s.shop.mapsUrl.toLowerCase().startsWith('https://')) return toast(t('mapsUrlBad'), { type: 'err' });
+  s.shop.reviewUrl = String(s.shop.reviewUrl || '').trim();
+  if (s.shop.reviewUrl && !safeUrl(s.shop.reviewUrl)) return toast(t('reviewUrlBad'), { type: 'err' });
   s.rule.minSpend = Math.max(0, Number(s.rule.minSpend) || 0);
   s.rule.perAmount = Math.max(1, Number(s.rule.perAmount) || 1);
   s.rule.maxPerDay = Math.max(0, Math.floor(Number(s.rule.maxPerDay) || 0));

@@ -325,6 +325,10 @@ dialog.alert p { margin: 0 0 18px; font-size: .98rem; font-weight: 600; white-sp
 .toast button { border: 0; background: rgba(255,255,255,.2); color: #fff; border-radius: 10px; padding: 6px 12px; font-weight: 800; cursor: pointer; }
 @keyframes drop { from { transform: translateY(-12px); opacity: 0; } }
 
+/* ---------- review prompt ---------- */
+.stars { color: #e7b53c; letter-spacing: 2px; font-size: 1.05rem; line-height: 1.2; margin-top: 2px; }
+.panel.review-hot { background: linear-gradient(135deg, #fffaf0, #fff3d6); box-shadow: 0 0 0 1.5px #f3d9a0, var(--shadow); }
+
 /* ---------- misc ---------- */
 .empty { text-align: center; color: var(--muted); padding: 28px 12px; font-size: .92rem; }
 .empty svg { width: 44px; height: 44px; color: color-mix(in oklab, var(--accent) 50%, white); margin-bottom: 8px; }

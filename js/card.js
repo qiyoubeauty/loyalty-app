@@ -5,12 +5,14 @@ import {
 } from './logic.js';
 import { t, lang, fmtDate, fmtDateTime, fmtMoney } from './i18n.js';
 import {
-  icon, esc, $, applyTheme, brandHtml, langSwitchHtml, bindLangSwitch, stampGridHtml, eventLabel, registerSW,
+  icon, esc, $, applyTheme, brandHtml, langSwitchHtml, bindLangSwitch, stampGridHtml, eventLabel, registerSW, safeUrl,
 } from './ui.js';
 
 const app = $('#app');
 const CARD_KEY = 'loyalty-card';
 const INSTALL_KEY = 'loyalty-install-dismissed';
+const REVIEW_KEY = 'loyalty-reviewed';
+const REVIEW_BOOST_DAYS = 14; // after a gift is redeemed, show the review prompt near the top for 2 weeks
 
 const S = {
   settings: withDefaults(null),
@@ -91,6 +93,12 @@ function render() {
   const popIndex = S.lastStamps !== null && card.stamps > S.lastStamps ? card.stamps : -1;
   S.lastStamps = card.stamps;
 
+  // Ask happy customers for a Google review: prominently right after a redeemed gift, otherwise lower down.
+  const canReview = !!safeUrl(st.shop.reviewUrl) && (c.totalVisits || 0) > 0 && !reviewedAlready();
+  const recentGift = S.events.some(e => e.type === 'redeem' && !e.undone && now - e.at < REVIEW_BOOST_DAYS * 864e5);
+  const reviewNow = canReview && recentGift;
+  const reviewLater = canReview && !recentGift;
+
   let progressText;
   if (next) progressText = next.remaining === 1
     ? t('moreTo1', { reward: rewardName(next.reward, lang) })
@@ -117,6 +125,7 @@ function render() {
     ${ready.map(x => `<div class="notice gold mt">${icon.gift}<span><b>${esc(t('readyToClaim'))} ${esc(rewardName(x.reward, lang))}</b><br><span style="font-weight:500">${esc(t('readyHint'))}</span></span></div>`).join('')}
     ${card.expired ? `<div class="notice warn mt">${icon.clock}<span>${esc(t('expiredNote'))}</span></div>` : ''}
     ${card.expiresAt ? `<div class="notice info mt">${icon.clock}<span>${esc(t('validUntil', { date: fmtDate(card.expiresAt) }))}</span></div>` : ''}
+    ${reviewNow ? reviewHtml(true) : ''}
     ${installHtml()}
 
     <div class="panel">
@@ -139,8 +148,14 @@ function render() {
       <ul class="rows">${historyHtml(st)}</ul>
     </div>
 
+    ${reviewLater ? reviewHtml(false) : ''}
     ${shopHtml(st)}
   </div>`;
+
+  const rv = $('#reviewBtn');
+  if (rv) rv.onclick = () => { setReviewed(); setTimeout(render, 500); };
+  const rvDone = $('#reviewDone');
+  if (rvDone) rvDone.onclick = () => { setReviewed(); render(); };
 
   const btn = $('#installBtn');
   if (btn) btn.onclick = async () => {
@@ -151,6 +166,28 @@ function render() {
   };
   const no = $('#installNo');
   if (no) no.onclick = () => { try { localStorage.setItem(INSTALL_KEY, '1'); } catch { /* ignore */ } render(); };
+}
+
+function reviewedAlready() {
+  try { return localStorage.getItem(REVIEW_KEY) === '1'; } catch { return false; }
+}
+
+function setReviewed() {
+  try { localStorage.setItem(REVIEW_KEY, '1'); } catch { /* ignore */ }
+}
+
+function reviewHtml(highlight) {
+  const link = safeUrl(S.settings.shop.reviewUrl);
+  return `<div class="panel ${highlight ? 'review-hot' : ''}">
+    <div style="display:flex;gap:12px;align-items:flex-start">
+      <div class="icon-bubble gold">${icon.star}</div>
+      <div class="grow"><b>${esc(t('rateTitle'))}</b>
+        <div class="stars" aria-hidden="true">★★★★★</div>
+        <p class="small muted" style="margin:4px 0 12px">${esc(t('rateBody'))}</p>
+        <div class="btn-row" style="align-items:center">
+          <a class="btn gold sm" id="reviewBtn" target="_blank" rel="noopener" href="${esc(link)}">${icon.star} ${esc(t('rateBtn'))}</a>
+          <button type="button" class="btn ghost sm" id="reviewDone" style="flex:none">${esc(t('rateDone'))}</button>
+        </div></div></div></div>`;
 }
 
 function installHtml() {

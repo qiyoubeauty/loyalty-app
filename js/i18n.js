@@ -204,6 +204,15 @@ const D = {
     mapsUrlHint: "In Google Maps, open your shop → Share → Copy link, then paste here.",
     mapsUrlBad: "The Google Maps link must start with https://",
     findUs: "Find us on Google Maps",
+    rateTitle: "Enjoyed your visit?",
+    rateBody: "A quick Google review really helps our small shop. Thank you! 💕",
+    rateBtn: "Rate us on Google",
+    rateDone: "Already reviewed",
+    askReview: "Ask for Google review",
+    waReview: "Hi {name}! 💅 Thank you for visiting {shop}. If you enjoyed it, would you leave us a quick Google review? It really helps us 🙏\n{link}",
+    reviewUrl: "Google review link",
+    reviewUrlHint: "Opens Google's \"write a review\" box for your shop. Leave empty to hide the review button.",
+    reviewUrlBad: "The Google review link must start with https://",
   },
 
   ms: {
@@ -404,6 +413,15 @@ const D = {
     mapsUrlHint: "Dalam Google Maps, buka kedai anda → Share → Copy link, kemudian tampal di sini.",
     mapsUrlBad: "Link Google Maps mesti bermula dengan https://",
     findUs: "Cari kami di Google Maps",
+    rateTitle: "Puas hati dengan servis kami?",
+    rateBody: "Review ringkas di Google sangat membantu kedai kecil kami. Terima kasih! 💕",
+    rateBtn: "Beri rating di Google",
+    rateDone: "Dah review",
+    askReview: "Minta review Google",
+    waReview: "Hai {name}! 💅 Terima kasih datang ke {shop}. Kalau puas hati, boleh tolong beri review ringkas di Google? Sangat membantu kami 🙏\n{link}",
+    reviewUrl: "Link review Google",
+    reviewUrlHint: "Buka terus kotak \"tulis review\" Google untuk kedai anda. Biarkan kosong untuk sembunyikan butang review.",
+    reviewUrlBad: "Link review Google mesti bermula dengan https://",
   },
 
   zh: {
@@ -604,6 +622,15 @@ const D = {
     mapsUrlHint: "在 Google Maps 打开店铺 → 分享 → 复制链接，再贴在这里。",
     mapsUrlBad: "Google Maps 链接必须以 https:// 开头",
     findUs: "在 Google Maps 找我们",
+    rateTitle: "喜欢我们的服务吗？",
+    rateBody: "在 Google 给我们留个好评，对我们小店帮助很大，谢谢你！💕",
+    rateBtn: "去 Google 给好评",
+    rateDone: "已经评价了",
+    askReview: "邀请 Google 好评",
+    waReview: "{name} 你好！💅 谢谢你来 {shop}。如果满意我们的服务，可以帮我们在 Google 留个好评吗？对我们帮助很大 🙏\n{link}",
+    reviewUrl: "Google 评价链接",
+    reviewUrlHint: "直接打开 Google 的\"写评价\"窗口。留空就不显示评价按钮。",
+    reviewUrlBad: "Google 评价链接必须以 https:// 开头",
   },
 };
 

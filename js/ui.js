@@ -39,6 +39,12 @@ export const icon = {
   more: svg('<circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/>'),
 };
 
+// Links typed into Settings are only used when they are plain https:// links.
+export function safeUrl(u) {
+  const s = String(u || '').trim();
+  return s.toLowerCase().startsWith('https://') ? s : '';
+}
+
 export function esc(s) {
   return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
