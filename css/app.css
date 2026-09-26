@@ -339,7 +339,7 @@ dialog.alert p { margin: 0 0 18px; font-size: .98rem; font-weight: 600; white-sp
 .greet h1 { margin: 0; font-size: 1.5rem; letter-spacing: -.02em; }
 .greet p { margin: 2px 0 0; color: var(--muted); font-size: .92rem; }
 
-@media (max-width: 480px) { .hide-sm { display: none; } .toolbar .btn.big { width: 58px; padding: 0; } }
+@media (max-width: 480px) { .hide-sm { display: none; } .reward-edit .grid2 { grid-template-columns: 1fr; gap: 14px; } .toolbar .btn.big { width: 58px; padding: 0; } }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }

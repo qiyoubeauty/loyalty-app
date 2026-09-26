@@ -619,9 +619,10 @@ function updateStampControls() {
   $('#earnHint').textContent = hint;
   $('#countVal').textContent = count;
   const btn = $('#stampBtn');
-  btn.innerHTML = count === 0 ? `${icon.check} ${esc(t('logVisit'))}`
-    : `${icon.flower} ${esc(count === 1 ? t('addStamp') : t('addStamps', { n: count }))}`;
-  btn.disabled = ruleNeedsAmount(st) && S.open.amount === '';
+  const waiting = ruleNeedsAmount(st) && S.open.amount === '';
+  btn.innerHTML = count === 0 && !waiting ? `${icon.check} ${esc(t('logVisit'))}`
+    : `${icon.flower} ${esc(count <= 1 ? t('addStamp') : t('addStamps', { n: count }))}`;
+  btn.disabled = waiting;
 }
 
 function renderHistory() {
