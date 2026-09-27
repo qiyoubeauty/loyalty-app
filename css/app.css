@@ -69,7 +69,7 @@ img { max-width: 100%; }
   display: grid; place-items: center; overflow: hidden;
   box-shadow: inset 0 0 0 1px rgba(255,255,255,.7);
 }
-.brand-logo:has(img) { background: #000; box-shadow: 0 4px 12px -4px rgba(0,0,0,.35); }
+.brand-logo:has(img) { background: #fefff1; box-shadow: 0 0 0 1px rgba(226, 180, 120, .35), 0 4px 12px -4px rgba(120, 80, 40, .25); }
 .brand-logo img { width: 100%; height: 100%; object-fit: cover; }
 .brand-logo svg { width: 24px; height: 24px; color: var(--accent-ink); }
 .brand-name { font-family: var(--font-display); font-weight: 400; font-size: 1.12rem; letter-spacing: .01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

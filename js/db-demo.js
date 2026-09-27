@@ -13,7 +13,10 @@ function load() {
     const raw = localStorage.getItem(KEY);
     if (raw) return JSON.parse(raw);
   } catch { /* storage blocked or corrupt — fall through to seed data */ }
-  return seed();
+  // Save the sample data straight away so card links work in other tabs too.
+  const fresh = seed();
+  try { localStorage.setItem(KEY, JSON.stringify(fresh)); } catch { /* ignore */ }
+  return fresh;
 }
 
 function save() {
