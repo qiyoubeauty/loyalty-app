@@ -12,6 +12,7 @@ const app = $('#app');
 const CARD_KEY = 'loyalty-card';
 const INSTALL_KEY = 'loyalty-install-dismissed';
 const REVIEW_KEY = 'loyalty-reviewed';
+const EXPIRY_WARN_DAYS = 30; // card turns the "valid until" note into a warning this close to expiry
 const REVIEW_BOOST_DAYS = 14; // after a gift is redeemed, show the review prompt near the top for 2 weeks
 
 const S = {
@@ -124,7 +125,9 @@ function render() {
 
     ${ready.map(x => `<div class="notice gold mt">${icon.gift}<span><b>${esc(t('readyToClaim'))} ${esc(rewardName(x.reward, lang))}</b><br><span style="font-weight:500">${esc(t('readyHint'))}</span></span></div>`).join('')}
     ${card.expired ? `<div class="notice warn mt">${icon.clock}<span>${esc(t('expiredNote'))}</span></div>` : ''}
-    ${card.expiresAt ? `<div class="notice info mt">${icon.clock}<span>${esc(t('validUntil', { date: fmtDate(card.expiresAt) }))}</span></div>` : ''}
+    ${card.expiresAt ? (card.stamps > 0 && card.expiresAt - now <= EXPIRY_WARN_DAYS * 864e5
+      ? `<div class="notice warn mt">${icon.alert}<span>${esc(t('expiringCard', { n: card.stamps, date: fmtDate(card.expiresAt) }))}</span></div>`
+      : `<div class="notice info mt">${icon.clock}<span>${esc(t('validUntil', { date: fmtDate(card.expiresAt) }))}</span></div>`) : ''}
     ${reviewNow ? reviewHtml(true) : ''}
     ${installHtml()}
 

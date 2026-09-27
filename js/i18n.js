@@ -228,6 +228,12 @@ const D = {
     resetNeedEmail: "Type your staff email first, then tap “Forgot password?”.",
     resetSent: "If {email} is a staff account, a reset link has been emailed. Check your inbox (and spam folder).",
     oldExpired: "{n} old stamps expired",
+    expiringHead: "Stamps expiring soon",
+    expiringFilter: "Expiring ≤{n} days",
+    expiringSub: "{n} stamps · expire {date} · {d} day(s) left",
+    daysShort: "{n}d",
+    waExpiring: "Hi {name}! 💅 Friendly reminder: your {n} stamp(s) at {shop} will expire on {date}. Visit us before then to keep them and get closer to your free gift! 🎁\n{link}",
+    expiringCard: "Your {n} stamp(s) will expire on {date}. Visit us before then to keep them!",
   },
 
   ms: {
@@ -452,6 +458,12 @@ const D = {
     resetNeedEmail: "Taip e-mel staf dulu, kemudian tekan “Lupa kata laluan?”.",
     resetSent: "Kalau {email} ialah akaun staf, link tukar kata laluan sudah dihantar. Semak inbox (dan folder spam).",
     oldExpired: "{n} cop lama luput",
+    expiringHead: "Cop hampir luput",
+    expiringFilter: "Luput ≤{n} hari",
+    expiringSub: "{n} cop · luput {date} · tinggal {d} hari",
+    daysShort: "{n} hari",
+    waExpiring: "Hai {name}! 💅 Peringatan mesra: {n} cop anda di {shop} akan luput pada {date}. Datang sebelum tarikh itu supaya cop tak hilang dan makin dekat dengan hadiah percuma! 🎁\n{link}",
+    expiringCard: "{n} cop anda akan luput pada {date}. Datang sebelum tarikh itu supaya cop tak hilang!",
   },
 
   zh: {
@@ -676,6 +688,12 @@ const D = {
     resetNeedEmail: "请先输入员工电邮，再按“忘记密码？”。",
     resetSent: "如果 {email} 是员工账号，重设密码的链接已经发到电邮。请查看收件箱（和垃圾邮件）。",
     oldExpired: "{n} 个旧章已过期",
+    expiringHead: "印章快过期的顾客",
+    expiringFilter: "{n}天内过期",
+    expiringSub: "{n} 个章 · {date} 过期 · 还剩 {d} 天",
+    daysShort: "{n}天",
+    waExpiring: "{name} 你好！💅 温馨提醒：你在 {shop} 的 {n} 个章会在 {date} 过期。记得在这之前来光顾，印章就不会作废，离免费礼品更近一步哦！🎁\n{link}",
+    expiringCard: "你的 {n} 个章将在 {date} 过期，记得在这之前来光顾，印章才不会作废哦！",
   },
 };
 

@@ -28,6 +28,7 @@ const S = {
   q: '',
   filter: 'all',
   lapsedDays: 60,
+  expiringDays: 30,
   month: monthKey(Date.now()),
   stats: {},
   draft: null,     // settings being edited
@@ -327,6 +328,23 @@ function remindWa(c) {
   window.open(waLink(c.phone, t('waRemind', { name: c.name.split(' ')[0], shop: S.settings.shop.name, n: card.stamps, link: cardLink(c.id) })), '_blank', 'noopener');
 }
 
+// Current stamps that will expire within `days` (null if none, or if expiry is switched off).
+function expiringInfo(c, now = Date.now(), days = S.expiringDays) {
+  if (!S.settings.expiry.enabled) return null;
+  const card = effectiveCard(c, S.settings, now);
+  if (!card.stamps || !card.expiresAt || card.expiresAt <= now) return null;
+  const left = Math.ceil((card.expiresAt - now) / DAY);
+  return left <= days ? { stamps: card.stamps, at: card.expiresAt, left } : null;
+}
+
+function expiringWa(c) {
+  const info = expiringInfo(c, Date.now(), 100000);
+  if (!info) return;
+  window.open(waLink(c.phone, t('waExpiring', {
+    name: c.name.split(' ')[0], shop: S.settings.shop.name, n: info.stamps, date: fmtDate(info.at), link: cardLink(c.id),
+  })), '_blank', 'noopener');
+}
+
 async function copyText(text) {
   try {
     await navigator.clipboard.writeText(text);
@@ -391,16 +409,21 @@ function viewCustomers(full) {
   const size = cardSize(st);
   const readyCount = S.customers.filter(c => readyRewards(c, st, now).length).length;
   const lapsedCount = S.customers.filter(c => isLapsed(c, now)).length;
+  const expiringCount = S.customers.filter(c => expiringInfo(c, now)).length;
   $('#filters').innerHTML = [
     ['all', `${t('all')} · ${S.customers.length}`],
     ['ready', `🎁 ${t('rewardReady')} · ${readyCount}`],
     ['lapsed', `${t('lapsed', { n: S.lapsedDays })} · ${lapsedCount}`],
+    ...(st.expiry.enabled ? [['expiring', `⏳ ${t('expiringFilter', { n: S.expiringDays })} · ${expiringCount}`]] : []),
   ].map(([k, label]) => `<button type="button" data-filter="${k}" aria-pressed="${S.filter === k}">${esc(label)}</button>`).join('');
 
   let list = S.customers.filter(c => matches(c, S.q));
   if (S.filter === 'ready') list = list.filter(c => readyRewards(c, st, now).length);
   if (S.filter === 'lapsed') list = list.filter(c => isLapsed(c, now));
+  if (S.filter === 'expiring') list = list.filter(c => expiringInfo(c, now));
   list.sort((a, b) => lastSeen(b) - lastSeen(a));
+  // Soonest to expire first.
+  if (S.filter === 'expiring') list.sort((a, b) => expiringInfo(a, now).at - expiringInfo(b, now).at);
 
   if (!list.length) {
     const none = !S.customers.length;
@@ -411,10 +434,12 @@ function viewCustomers(full) {
   $('#list').innerHTML = list.slice(0, 150).map(c => {
     const card = effectiveCard(c, st, now);
     const ready = readyRewards(c, st, now).length;
+    const exp = expiringInfo(c, now);
     return `<li class="row" data-open="${c.id}">
       <div class="avatar">${esc(initials(c.name))}</div>
       <div class="grow"><div class="title">${esc(c.name)}</div>
         <div class="sub">${esc(formatPhone(c.phone, st.countryCode))} · ${esc(relDay(c.lastVisitAt, now))}</div></div>
+      ${exp ? `<span class="chip warn" title="${esc(fmtDate(exp.at))}">${icon.clock} ${esc(t('daysShort', { n: exp.left }))}</span>` : ''}
       ${ready ? `<span class="chip gold">${icon.gift}</span>` : ''}
       <span class="chip accent">${card.stamps}/${size}</span>
     </li>`;
@@ -845,6 +870,9 @@ function viewDashboard() {
     .sort((a, b) => lastSeen(b.c) - lastSeen(a.c));
   const top = [...S.customers].sort((a, b) => (b.totalVisits || 0) - (a.totalVisits || 0)).slice(0, 8);
   const lapsed = S.customers.filter(c => isLapsed(c, now)).sort((a, b) => lastSeen(a) - lastSeen(b)).slice(0, 30);
+  const expiring = st.expiry.enabled
+    ? S.customers.map(c => ({ c, info: expiringInfo(c, now) })).filter(x => x.info).sort((a, b) => a.info.at - b.info.at).slice(0, 30)
+    : null;
   const rowOf = (c, right) => `<li class="row" data-open="${c.id}" style="cursor:pointer">
       <div class="avatar">${esc(initials(c.name))}</div>
       <div class="grow"><div class="title">${esc(c.name)}</div><div class="sub">${esc(formatPhone(c.phone, st.countryCode))} · ${esc(relDay(c.lastVisitAt, now))}</div></div>${right}</li>`;
@@ -872,6 +900,15 @@ function viewDashboard() {
         <ul class="rows">${waiting.slice(0, 20).map(x => rowOf(x.c, `<span class="chip gold">${esc(x.ready.map(r => rewardName(r.reward, lang)).join(', '))}</span>`)).join('') || empty}</ul></div>
       <div class="panel"><h2>${icon.star} ${esc(t('topCustomers'))}</h2>
         <ul class="rows">${top.map(c => rowOf(c, `<span class="chip accent">${c.totalVisits || 0} ${esc(t('visits'))}</span>`)).join('') || empty}</ul></div>
+      ${expiring ? `<div class="panel"><h2>${icon.clock} ${esc(t('expiringHead'))}<span class="count">${expiring.length}</span>
+          <select class="input" id="expiringSel" style="width:auto;min-height:34px;padding:4px 10px;margin-left:8px;font-size:.85rem">
+            ${[7, 14, 30, 60].map(n => `<option value="${n}" ${n === S.expiringDays ? 'selected' : ''}>≤ ${n} ${esc(t('days'))}</option>`).join('')}
+          </select></h2>
+        <ul class="rows">${expiring.map(({ c, info }) => `<li class="row" data-open="${c.id}" style="cursor:pointer">
+            <div class="avatar">${esc(initials(c.name))}</div>
+            <div class="grow"><div class="title">${esc(c.name)}</div>
+              <div class="sub">${esc(t('expiringSub', { n: info.stamps, date: fmtDate(info.at), d: info.left }))}</div></div>
+            <button type="button" class="btn wa sm" data-expwa="${c.id}">${icon.whatsapp} ${esc(t('remind'))}</button></li>`).join('') || empty}</ul></div>` : ''}
       <div class="panel"><h2>${icon.clock} ${esc(t('lapsedHead'))}
           <select class="input" id="lapsedSel" style="width:auto;min-height:34px;padding:4px 10px;margin-left:auto;font-size:.85rem">
             ${[30, 60, 90, 180].map(n => `<option value="${n}" ${n === S.lapsedDays ? 'selected' : ''}>${n}+ ${esc(t('days'))}</option>`).join('')}
@@ -887,6 +924,8 @@ function viewDashboard() {
   v.onclick = async e => {
     const mb = e.target.closest('[data-month]');
     if (mb) { S.month = shiftMonth(S.month, Number(mb.dataset.month)); viewDashboard(); return; }
+    const exw = e.target.closest('[data-expwa]');
+    if (exw) { expiringWa(S.customers.find(c => c.id === exw.dataset.expwa)); return; }
     const rem = e.target.closest('[data-remind]');
     if (rem) { remindWa(S.customers.find(c => c.id === rem.dataset.remind)); return; }
     if (e.target.closest('[data-export]')) return exportCsv();
@@ -898,6 +937,8 @@ function viewDashboard() {
     if (row) openCustomer(row.dataset.open);
   };
   $('#lapsedSel').onchange = e => { S.lapsedDays = Number(e.target.value); viewDashboard(); };
+  const expSel = $('#expiringSel');
+  if (expSel) expSel.onchange = e => { S.expiringDays = Number(e.target.value); viewDashboard(); };
 }
 
 function exportCsv() {
