@@ -227,6 +227,7 @@ const D = {
     forgotPassword: "Forgot password?",
     resetNeedEmail: "Type your staff email first, then tap “Forgot password?”.",
     resetSent: "If {email} is a staff account, a reset link has been emailed. Check your inbox (and spam folder).",
+    oldExpired: "{n} old stamps expired",
   },
 
   ms: {
@@ -450,6 +451,7 @@ const D = {
     forgotPassword: "Lupa kata laluan?",
     resetNeedEmail: "Taip e-mel staf dulu, kemudian tekan “Lupa kata laluan?”.",
     resetSent: "Kalau {email} ialah akaun staf, link tukar kata laluan sudah dihantar. Semak inbox (dan folder spam).",
+    oldExpired: "{n} cop lama luput",
   },
 
   zh: {
@@ -673,6 +675,7 @@ const D = {
     forgotPassword: "忘记密码？",
     resetNeedEmail: "请先输入员工电邮，再按“忘记密码？”。",
     resetSent: "如果 {email} 是员工账号，重设密码的链接已经发到电邮。请查看收件箱（和垃圾邮件）。",
+    oldExpired: "{n} 个旧章已过期",
   },
 };
 

@@ -196,6 +196,8 @@ export function eventLabel(e) {
     return { ic: icon.gift, cls: 'gold', title };
   }
   if (e.type === 'adjust') return { ic: icon.sparkle, cls: 'muted', title: t('adjusted', { n: e.to }) + (e.reason ? ` — ${e.reason}` : '') };
-  const title = e.count > 0 ? (e.count === 1 ? t('stampsEarned', { n: 1 }) : t('stampsEarnedPl', { n: e.count })) : t('visit');
+  const base = e.count > 0 ? (e.count === 1 ? t('stampsEarned', { n: 1 }) : t('stampsEarnedPl', { n: e.count })) : t('visit');
+  // A stamp given after the old stamps expired also records how many were lost.
+  const title = e.expired > 0 ? `${base} · ${t('oldExpired', { n: e.expired })}` : base;
   return { ic: icon.flower, cls: e.count > 0 ? '' : 'muted', title };
 }
