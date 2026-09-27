@@ -130,9 +130,17 @@ export function applyTheme(settings) {
   }
 }
 
+// Bump when the logo files in /icons change, so phones fetch the new image instead of an old saved copy.
+const ASSET_VERSION = '2';
+
+// Logos from /icons get a version tag; uploaded logos (data URLs) are used as-is.
+export function logoSrc(logo) {
+  return String(logo).startsWith('icons/') ? `${logo}?v=${ASSET_VERSION}` : logo;
+}
+
 export function brandHtml(settings, sub) {
   const shop = settings.shop;
-  const logo = shop.logo ? `<img src="${esc(shop.logo)}" alt="">` : icon.flower;
+  const logo = shop.logo ? `<img src="${esc(logoSrc(shop.logo))}" alt="">` : icon.flower;
   return `<div class="brand"><div class="brand-logo">${logo}</div>
     <div style="min-width:0"><div class="brand-name">${esc(shop.name)}</div>
     <div class="brand-tag">${esc(sub ?? shop.tagline)}</div></div></div>`;

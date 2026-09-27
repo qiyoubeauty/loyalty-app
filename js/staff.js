@@ -9,7 +9,7 @@ import {
 import { t, lang, fmtDate, fmtDateTime, fmtMoney, relDay } from './i18n.js';
 import {
   icon, esc, $, toast, confirmBox, applyTheme, brandHtml, langSwitchHtml, bindLangSwitch,
-  stampGridHtml, initials, registerSW, eventLabel, setHtmlKeepToasts, safeUrl,
+  stampGridHtml, initials, registerSW, eventLabel, setHtmlKeepToasts, safeUrl, logoSrc,
 } from './ui.js';
 import qrcode from './vendor/qrcode.mjs';
 
@@ -965,7 +965,7 @@ function viewSettings(full) {
       <div class="panel" style="margin-top:0">
         <h2>${icon.heart} ${esc(t('shopProfile'))}</h2>
         <div class="field"><span>${esc(t('logo'))}</span>
-          <div class="logo-edit"><div class="brand-logo">${sh.logo ? `<img src="${esc(sh.logo)}" alt="">` : icon.flower}</div>
+          <div class="logo-edit"><div class="brand-logo">${sh.logo ? `<img src="${esc(logoSrc(sh.logo))}" alt="">` : icon.flower}</div>
             <label class="btn soft sm">${icon.upload} ${esc(t('uploadLogo'))}<input type="file" accept="image/*" id="logoFile" hidden></label>
             ${sh.logo ? `<button type="button" class="btn ghost sm" data-s="nologo">${esc(t('removeLogo'))}</button>` : ''}
           </div></div>
